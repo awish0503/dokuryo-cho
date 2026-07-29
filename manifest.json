@@ -1,0 +1,15 @@
+{
+  "name": "読了帳 - 人間革命",
+  "short_name": "読了帳",
+  "description": "人間革命・新人間革命の読了記録と日々の感想をつけるアプリ",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f2e7",
+  "theme_color": "#7a3b34",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
