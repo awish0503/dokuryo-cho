@@ -142,7 +142,7 @@
 <div id="app"></div>
 
 <script>
-/* ---------------- 初期データ（画像の読了表より） ---------------- */
+/* ---------------- 初期データ(画像の読了表より) ---------------- */
 const INITIAL_DATA = {
   "人間革命": [
     { vol:1, chapters:["はじめに","黎明","再建","終戦前後","占領","一人立つ","千里の道","胎動","歯車"] },
@@ -174,7 +174,7 @@ const INITIAL_DATA = {
 const BOOKS = Object.keys(INITIAL_DATA);
 const STORAGE_KEY = "ningen-kakumei-tracker-pwa-v1";
 
-/* ---------------- 状態管理（localStorage） ---------------- */
+/* ---------------- 状態管理(localStorage) ---------------- */
 function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -288,7 +288,7 @@ function render(){
       <div class="add-vol-form">
         <div class="row">
           <input class="num" type="number" id="newVolNum" placeholder="巻番号" />
-          <input class="chs" type="text" id="newVolChapters" placeholder="章名（読点区切り：例 旭日、新世界、錦秋）" />
+          <input class="chs" type="text" id="newVolChapters" placeholder="章名(読点区切り:例 旭日、新世界、錦秋)" />
         </div>
         <div class="actions">
           <button class="btn-ghost" id="cancelAddVol">キャンセル</button>
@@ -312,7 +312,7 @@ function render(){
       <div class="row">
         <input type="date" id="journalDate" value="${esc(journalDraft.date)}" />
         <select id="journalRef">
-          <option value="">（章を紐づけない）</option>
+          <option value="">(章を紐づけない)</option>
           ${options.map(o => `<option value="${esc(o)}" ${journalDraft.ref===o?'selected':''}>${esc(o)}</option>`).join("")}
         </select>
       </div>
@@ -423,14 +423,14 @@ function bindEvents(){
 
 render();
 
-/* ---------------- Service Worker 登録（オフライン対応） ---------------- */
+/* ---------------- Service Worker 登録(オフライン対応) ---------------- */
 if("serviceWorker" in navigator){
   window.addEventListener("load", ()=>{
     navigator.serviceWorker.register("sw.js").catch(()=>{});
   });
 }
 
-/* ---------------- ホーム画面追加バナー（Android/Chrome） ---------------- */
+/* ---------------- ホーム画面追加バナー(Android/Chrome) ---------------- */
 let deferredPrompt = null;
 window.addEventListener("beforeinstallprompt", (e)=>{
   e.preventDefault();
@@ -457,61 +457,3 @@ function showInstallBanner(){
 </script>
 </body>
 </html>
-
-{
-  "name": "読了帳 - 人間革命",
-  "short_name": "読了帳",
-  "description": "人間革命・新人間革命の読了記録と日々の感想をつけるアプリ",
-  "start_url": "./index.html",
-  "scope": "./",
-  "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#f7f2e7",
-  "theme_color": "#7a3b34",
-  "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
-  ]
-}
-
-const CACHE_NAME = "dokuryo-cho-v1";
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-];
-
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).catch(() => {})
-  );
-  self.skipWaiting();
-});
-
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
-  );
-  self.clients.claim();
-});
-
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const fetchPromise = fetch(event.request)
-        .then((res) => {
-          if (event.request.method === "GET" && res && res.status === 200) {
-            const resClone = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
-          }
-          return res;
-        })
-        .catch(() => cached);
-      return cached || fetchPromise;
-    })
-  );
-});
